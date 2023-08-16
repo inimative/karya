@@ -73,7 +73,17 @@ class Tasks {
     return Future.value(tasks);
   }
 
-  void add(Task task) {
-    _tasks.add(task);
+  void upsert(Task t) {
+    var i = _tasks.indexWhere((element) => element.id == t.id);
+    if (i < 0) {
+      _tasks.add(t);
+    } else {
+      _tasks[i] = t;
+    }
+  }
+
+  Future<Task> findById(String taskId) async {
+    var t = _tasks.firstWhere((element) => element.id == taskId);
+    return Future.value(t);
   }
 }

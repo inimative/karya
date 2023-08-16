@@ -27,4 +27,4 @@
     * id
     * name
     * completed
-  * projectRef
+  * projectId

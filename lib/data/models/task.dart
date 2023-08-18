@@ -3,14 +3,20 @@ import 'package:uuid/uuid.dart';
 class SubTask {
   String id;
   String name;
-  String description;
   bool completed;
 
-  SubTask(this.id, this.name, this.description, this.completed);
+  SubTask(this.id, this.name, this.completed);
 
   static SubTask fromDocumentData(Map<String, dynamic> data) {
-    return SubTask(
-        data['id'], data['name'], data['description'], data['completed']);
+    return SubTask(data['id'], data['name'], data['completed']);
+  }
+
+  toDocumentData() {
+    return <String, dynamic>{
+      "id": id,
+      "name": name,
+      "completed": completed,
+    };
   }
 }
 
@@ -37,9 +43,10 @@ class Task {
       data['description'],
       DateTime.fromMillisecondsSinceEpoch(data['schedule']),
       data['completed'],
-      data['subTasks'].isEmpty
-          ? []
-          : data['subTasks'].map((e) => SubTask.fromDocumentData(e)).toList(),
+      data['subTasks']
+          .map((e) => SubTask.fromDocumentData(e))
+          .toList()
+          .cast<SubTask>(),
       data['projectId'],
     );
   }
@@ -51,7 +58,7 @@ class Task {
       "description": description,
       "schedule": schedule.millisecondsSinceEpoch,
       "completed": completed,
-      "subTasks": subTasks,
+      "subTasks": subTasks.map((e) => e.toDocumentData()).toList(),
       "projectId": projectId
     };
   }

@@ -32,7 +32,7 @@ class Tasks {
     var docRef = FirebaseFirestore.instance.collection("tasks").doc(taskId);
     var snapshot = await docRef.get();
     if (snapshot.exists) {
-      Task.fromDocumentData(snapshot.data()!);
+      return Task.fromDocumentData(snapshot.data()!);
     }
     return Future.error("error");
   }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:karya/data/models/task.dart';
 
 class Tasks {
@@ -14,76 +15,25 @@ class Tasks {
   Future<List<Task>> get tasks => Future.value(_tasks);
 
   Future<List<Task>> load() async {
-    List<Task> tasks = [
-      Task("abc", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc1", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc2", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc3", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc4", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc5", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc6", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc7", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc8", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-      Task("abc9", "Somehting", "with description", DateTime.now(), false, [],
-          "project1"),
-    ];
-
-    _tasks = tasks;
+    print("loading");
+    _tasks = (await FirebaseFirestore.instance.collection("tasks").get())
+        .docs
+        .map((e) => Task.fromDocumentData(e.data()))
+        .toList();
     return Future.value(tasks);
   }
 
-  void upsert(Task t) {
-    var i = _tasks.indexWhere((element) => element.id == t.id);
-    if (i < 0) {
-      _tasks.add(t);
-    } else {
-      _tasks[i] = t;
-    }
+  Future<void> upsert(Task t) async {
+    var docRef = FirebaseFirestore.instance.collection("tasks").doc(t.id);
+    await docRef.set(t.toDocumentData());
   }
 
   Future<Task> findById(String taskId) async {
-    var t = _tasks.firstWhere((element) => element.id == taskId);
-    return Future.value(t);
+    var docRef = FirebaseFirestore.instance.collection("tasks").doc(taskId);
+    var snapshot = await docRef.get();
+    if (snapshot.exists) {
+      Task.fromDocumentData(snapshot.data()!);
+    }
+    return Future.error("error");
   }
 }

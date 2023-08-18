@@ -50,3 +50,4 @@ firestore.indexes.json
 firestore.rules
 ios/firebase_app_id_file.json
 lib/firebase_options.dart
+emulators_data

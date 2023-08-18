@@ -31,8 +31,22 @@ class Task {
       data['description'],
       DateTime.fromMillisecondsSinceEpoch(data['schedule']),
       data['completed'],
-      (data['subTasks'] ?? []).map((e) => SubTask.fromDocumentData(e)).toList(),
+      data['subTasks'].isEmpty
+          ? []
+          : data['subTasks'].map((e) => SubTask.fromDocumentData(e)).toList(),
       data['projectId'],
     );
+  }
+
+  Map<String, dynamic> toDocumentData() {
+    return <String, dynamic>{
+      "id": id,
+      "name": name,
+      "description": description,
+      "schedule": schedule.millisecondsSinceEpoch,
+      "completed": completed,
+      "subTasks": subTasks,
+      "projectId": projectId
+    };
   }
 }

@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _navigateToNewTaskScreen(BuildContext context) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const TaskFormView()),
+      MaterialPageRoute(builder: (context) => TaskFormView(task: Task.newTask())),
     );
 
     setState(() {});

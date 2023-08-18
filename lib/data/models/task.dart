@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+
 class SubTask {
   String id;
   String name;
@@ -23,6 +25,10 @@ class Task {
 
   Task(this.id, this.name, this.description, this.schedule, this.completed,
       this.subTasks, this.projectId);
+
+  static Task newTask() {
+    return Task(const Uuid().v4(), '', '', DateTime.now(), false, [], '');
+  }
 
   static Task fromDocumentData(Map<String, dynamic> data) {
     return Task(

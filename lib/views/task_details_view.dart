@@ -58,7 +58,7 @@ class _TaskDetailsViewState extends State<TaskDetailsView> {
               var result = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => TaskFormView(task: snapshot.data)),
+                    builder: (context) => TaskFormView(task: snapshot.data!)),
               );
 
               setState(() {});

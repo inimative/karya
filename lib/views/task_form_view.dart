@@ -3,39 +3,33 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:karya/data/models/task.dart';
 import 'package:karya/data/services/Tasks.dart';
-import 'package:uuid/uuid.dart';
 
 class TaskFormView extends StatefulWidget {
-  final Task? task;
-  const TaskFormView({super.key, this.task});
+  final Task task;
+
+  const TaskFormView({super.key, required this.task});
 
   @override
-  State<TaskFormView> createState() => _TaskFormViewState();
+  State<TaskFormView> createState() => _TaskFormViewState(task: task);
 }
 
 class _TaskFormViewState extends State<TaskFormView> {
   final formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
-  final descriptionController = TextEditingController();
   final dtController = TextEditingController();
-  late DateTime pickedDt;
+  Task task;
+
+  _TaskFormViewState({required this.task});
 
   @override
   void initState() {
     super.initState();
-    pickedDt = widget.task?.schedule??DateTime.now();
-    nameController.text = widget.task?.name??'';
-    descriptionController.text = widget.task?.description??'';
-    dtController.text =
-        (widget.task?.schedule ?? DateTime.now()).format("d/MMM/yyyy KK:mm a");
+    dtController.text = task.schedule.format("d/MMM/yyyy KK:mm a");
   }
 
   @override
   void dispose() {
     super.dispose();
 
-    nameController.dispose();
-    descriptionController.dispose();
     dtController.dispose();
   }
 
@@ -71,7 +65,7 @@ class _TaskFormViewState extends State<TaskFormView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                controller: nameController,
+                initialValue: task.name,
                 decoration:
                     const InputDecoration(filled: true, labelText: "Name"),
                 validator: (value) {
@@ -80,10 +74,11 @@ class _TaskFormViewState extends State<TaskFormView> {
                   }
                   return null;
                 },
+                onChanged: (String? value) => task.name = value ?? '',
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: descriptionController,
+                initialValue: task.description,
                 decoration: const InputDecoration(
                     filled: true, labelText: "Description"),
                 validator: (value) {
@@ -92,6 +87,7 @@ class _TaskFormViewState extends State<TaskFormView> {
                   }
                   return null;
                 },
+                onChanged: (String? value) => task.description = value ?? '',
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -104,11 +100,10 @@ class _TaskFormViewState extends State<TaskFormView> {
                       context,
                       CupertinoDatePicker(
                         showDayOfWeek: true,
-                        initialDateTime: pickedDt,
+                        initialDateTime: task.schedule,
                         onDateTimeChanged: (val) {
-                          pickedDt = val;
-                          dtController.text =
-                              pickedDt.format("d/MMM/yyyy KK:mm a");
+                          task.schedule = val;
+                          dtController.text = val.format("d/MMM/yyyy KK:mm a");
                         },
                       ));
                 },
@@ -120,14 +115,8 @@ class _TaskFormViewState extends State<TaskFormView> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (formKey.currentState!.validate()) {
-            Task t = widget.task??Task(const Uuid().v4(), '',
-                '', pickedDt, false, [], null);
-            t.name = nameController.text;
-            t.description = descriptionController.text;
-            t.schedule = pickedDt;
-
-            Tasks().upsert(t);
-            Navigator.pop(context, t);
+            Tasks().upsert(task);
+            Navigator.pop(context, task);
           }
         },
         child: const Icon(Icons.save),

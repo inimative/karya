@@ -38,7 +38,7 @@ class TaskService {
     return Future.error("error");
   }
 
-  updateSubTask(String taskId, SubTask subTask) async {
+  Future<void> updateSubTask(String taskId, SubTask subTask) async {
     var docRef = FirebaseFirestore.instance.collection("tasks").doc(taskId);
     await docRef.update({"subTasks.${subTask.id}": subTask.toDocumentData()});
   }

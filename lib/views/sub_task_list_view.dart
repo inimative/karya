@@ -25,9 +25,9 @@ class _SubTaskListViewState extends State<SubTaskListView> {
 
         return ListTile(
           trailing: Checkbox(
-              onChanged: (bool? value) {
+              onChanged: (bool? value) async {
                 item.completed = value ?? false;
-                TaskService().updateSubTask(widget.taskId, item);
+                await TaskService().updateSubTask(widget.taskId, item);
                 setState(() {});
               },
               value: item.completed),

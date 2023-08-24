@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:karya/data/models/task.dart';
+import 'package:karya/data/services/Tasks.dart';
 import 'package:karya/views/task_details_view.dart';
 
 class TaskListView extends StatefulWidget {
@@ -21,12 +22,18 @@ class _TaskListViewState extends State<TaskListView> {
         final item = widget.items[index];
 
         return ListTile(
-          trailing:
-              Checkbox(onChanged: (bool? value) {
-                setState(() {
-                  item.completed = !item.completed;
-                });
-              }, value: item.completed),
+          trailing: item.subTasks.isEmpty
+              ? Checkbox(
+                  onChanged: (bool? value) async {
+                    item.completed = !item.completed;
+                    await TaskService().upsert(item);
+                    setState(() {});
+                  },
+                  value: item.completed)
+              : const Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Icon(Icons.arrow_right),
+                ),
           title: Text(item.name),
           subtitle: Text(item.description),
           onTap: () async {

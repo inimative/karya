@@ -35,7 +35,8 @@ class _TaskDetailsViewState extends State<TaskDetailsView> {
 
   Scaffold getTaskDetailsPage(
       AsyncSnapshot<Task> snapshot, BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
+    var themeData = Theme.of(context);
+    var textTheme = themeData.textTheme;
     return Scaffold(
         appBar: AppBar(
           title: const Text("Task Details"),
@@ -66,7 +67,11 @@ class _TaskDetailsViewState extends State<TaskDetailsView> {
               const Divider(
                 thickness: 2,
               ),
-              Expanded(child: SubTaskListView(items: snapshot.data!.subTasks, taskId: widget.taskId))
+              Expanded(
+                  child: SubTaskListView(
+                items: snapshot.data!.subTasks,
+                taskId: widget.taskId,
+              ))
             ],
           ),
         ),

@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:karya/data/models/task.dart';
-import 'package:karya/views/task_form_view.dart';
-import 'package:karya/views/task_list_view.dart';
-
-import '../data/services/Tasks.dart';
+import 'package:karya/pages/today.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,50 +9,59 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Future<void> _navigateToNewTaskScreen(BuildContext context) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => TaskFormView(task: Task.newTask())),
-    );
-
-    setState(() {});
-  }
-
-  Widget getBody() {
-    return FutureBuilder<List<Task>>(
-      future: TaskService.load(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return TaskListView(
-              items: snapshot.data ?? [],
-              refreshData: () {
-                setState(() {});
-              });
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
-
-        // By default, show a loading spinner.
-        return const CircularProgressIndicator();
-      },
-    );
-  }
+  int currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Today"),
-      ),
-      body: Center(
-        child: getBody(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _navigateToNewTaskScreen(context);
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
         },
-        child: const Icon(Icons.add),
+        selectedIndex: currentPageIndex,
+        destinations: const <Widget>[
+          NavigationDestination(
+            selectedIcon: Icon(Icons.today),
+            icon: Icon(Icons.today_outlined),
+            label: 'Today',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.file_copy),
+            icon: Icon(Icons.file_copy_outlined),
+            label: 'Projects',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.event_repeat),
+            icon: Icon(Icons.event_repeat_outlined),
+            label: 'Routines',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.settings),
+            icon: Icon(Icons.settings_outlined),
+            label: 'Settings',
+          ),
+        ],
       ),
+      body: <Widget>[
+        const TodayPage(),
+        Container(
+          color: Colors.green,
+          alignment: Alignment.center,
+          child: const Text('Page 2'),
+        ),
+        Container(
+          color: Colors.blue,
+          alignment: Alignment.center,
+          child: const Text('Page 3'),
+        ),
+        Container(
+          color: Colors.red,
+          alignment: Alignment.center,
+          child: const Text('Page 4'),
+        ),
+      ][currentPageIndex],
     );
   }
 }

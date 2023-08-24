@@ -19,7 +19,7 @@ class _TaskDetailsViewState extends State<TaskDetailsView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Task>(
-      future: TaskService().findById(widget.taskId),
+      future: TaskService.findById(widget.taskId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return getTaskDetailsPage(snapshot, context);

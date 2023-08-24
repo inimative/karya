@@ -70,7 +70,7 @@ class _TaskFormViewState extends State<TaskFormView> {
           TextButton(
               onPressed: () {
                 if (formKey.currentState!.validate()) {
-                  TaskService().upsert(task);
+                  TaskService.upsert(task);
                   Navigator.pop(context, task);
                 }
               },

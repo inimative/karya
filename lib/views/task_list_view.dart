@@ -26,13 +26,13 @@ class _TaskListViewState extends State<TaskListView> {
               ? Checkbox(
                   onChanged: (bool? value) async {
                     item.completed = !item.completed;
-                    await TaskService().upsert(item);
+                    await TaskService.upsert(item);
                     setState(() {});
                   },
                   value: item.completed)
               : const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Icon(Icons.arrow_right),
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.chevron_right, size: 32,),
                 ),
           title: Text(item.name),
           subtitle: Text(item.description),

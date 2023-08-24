@@ -70,7 +70,7 @@ class _TaskFormViewState extends State<TaskFormView> {
           TextButton(
               onPressed: () {
                 if (formKey.currentState!.validate()) {
-                  Tasks().upsert(task);
+                  TaskService().upsert(task);
                   Navigator.pop(context, task);
                 }
               },
@@ -161,8 +161,9 @@ class _TaskFormViewState extends State<TaskFormView> {
           icon: const Icon(Icons.add_outlined),
           onPressed: () {
             if (subTaskController.text.isEmpty) return;
-            task.subTasks
-                .add(SubTask(const Uuid().v4(), subTaskController.text, false));
+            var subTaskId = const Uuid().v4();
+            task.subTasks.putIfAbsent(subTaskId,
+                () => SubTask(subTaskId, subTaskController.text, false));
             subTaskController.clear();
             setState(() => _scrollToBottom());
           },
@@ -172,13 +173,11 @@ class _TaskFormViewState extends State<TaskFormView> {
   }
 
   getSubTaskFields() {
-    return task.subTasks
+    return task.subTasks.values
         .map((e) => Focus(
               onFocusChange: (focused) {
                 if (!focused && e.name.isEmpty) {
-                  task.subTasks = task.subTasks
-                      .where((element) => element.id != e.id)
-                      .toList();
+                  task.subTasks.removeWhere((key, value) => key == e.id);
                   setState(() {});
                 }
               },
@@ -189,10 +188,10 @@ class _TaskFormViewState extends State<TaskFormView> {
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.cancel_outlined),
                     onPressed: () {
-                      task.subTasks = task.subTasks
-                          .where((element) => element.id != e.id)
-                          .toList();
-                      setState(() {});
+                      task.subTasks.removeWhere((key, value) => key == e.id);
+                      setState(
+                        () {},
+                      );
                     },
                   ),
                 ),

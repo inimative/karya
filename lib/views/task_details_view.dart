@@ -1,6 +1,7 @@
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
 import 'package:karya/data/models/task.dart';
+import 'package:karya/views/sub_task_list_view.dart';
 import 'package:karya/views/task_form_view.dart';
 
 import '../data/services/Tasks.dart';
@@ -18,7 +19,7 @@ class _TaskDetailsViewState extends State<TaskDetailsView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Task>(
-      future: Tasks().findById(widget.taskId),
+      future: TaskService().findById(widget.taskId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return getTaskDetailsPage(snapshot, context);
@@ -34,6 +35,7 @@ class _TaskDetailsViewState extends State<TaskDetailsView> {
 
   Scaffold getTaskDetailsPage(
       AsyncSnapshot<Task> snapshot, BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
     return Scaffold(
         appBar: AppBar(
           title: const Text("Task Details"),
@@ -43,11 +45,28 @@ class _TaskDetailsViewState extends State<TaskDetailsView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(snapshot.data!.name, style: Theme.of(context).textTheme.titleLarge),
-              const Divider(),
-              Text(snapshot.data!.description, style: Theme.of(context).textTheme.titleSmall),
-              const Divider(),
-              Text(snapshot.data!.schedule.format("d/MMM/yyyy KK:mm a")),
+              ListTile(
+                title: Text(snapshot.data!.name, style: textTheme.titleLarge),
+                subtitle: Text(snapshot.data!.description),
+                trailing: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      snapshot.data!.schedule.format("E"),
+                      style: textTheme.titleMedium,
+                    ),
+                    Text(
+                      snapshot.data!.schedule.format("MMM y"),
+                      style: textTheme.labelSmall,
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(
+                thickness: 2,
+              ),
+              Expanded(child: SubTaskListView(items: snapshot.data!.subTasks, taskId: widget.taskId))
             ],
           ),
         ),

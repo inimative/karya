@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget getBody() {
     return FutureBuilder<List<Task>>(
-      future: Tasks().tasks,
+      future: TaskService().tasks,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return TaskListView(
@@ -63,6 +63,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    Tasks().load();
+    TaskService().load();
   }
 }

@@ -1,22 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:karya/data/models/task.dart';
 
-class Tasks {
-  static final Tasks _singleton = Tasks._internal();
+class TaskService {
+  static final TaskService _singleton = TaskService._internal();
 
-  factory Tasks() {
+  factory TaskService() {
     return _singleton;
   }
 
-  Tasks._internal();
+  TaskService._internal();
 
   late List<Task> _tasks = [];
 
   Future<List<Task>> get tasks => Future.value(_tasks);
 
   Future<List<Task>> load() async {
-    print("loading");
-    _tasks = (await FirebaseFirestore.instance.collection("tasks").get())
+    _tasks = (await FirebaseFirestore.instance
+            .collection("tasks")
+            .get(GetOptions(source: Source.server)))
         .docs
         .map((e) => Task.fromDocumentData(e.data()))
         .toList();
@@ -35,5 +36,10 @@ class Tasks {
       return Task.fromDocumentData(snapshot.data()!);
     }
     return Future.error("error");
+  }
+
+  updateSubTask(String taskId, SubTask subTask) async {
+    var docRef = FirebaseFirestore.instance.collection("tasks").doc(taskId);
+    await docRef.update({"subTasks.${subTask.id}": subTask.toDocumentData()});
   }
 }

@@ -26,27 +26,29 @@ class Task {
   String description;
   DateTime schedule;
   bool completed;
-  List<SubTask> subTasks;
+  Map<String, SubTask> subTasks;
   String? projectId;
 
   Task(this.id, this.name, this.description, this.schedule, this.completed,
       this.subTasks, this.projectId);
 
   static Task newTask() {
-    return Task(const Uuid().v4(), '', '', DateTime.now(), false, [], '');
+    return Task(const Uuid().v4(), '', '', DateTime.now(), false, {}, '');
   }
 
   static Task fromDocumentData(Map<String, dynamic> data) {
+    Map<String, SubTask> subTasks = {};
+    data['subTasks'].keys.forEach((k) {
+      subTasks.putIfAbsent(
+          k, () => SubTask.fromDocumentData(data['subTasks'][k]));
+    });
     return Task(
       data['id'],
       data['name'],
       data['description'],
       DateTime.fromMillisecondsSinceEpoch(data['schedule']),
       data['completed'],
-      data['subTasks']
-          .map((e) => SubTask.fromDocumentData(e))
-          .toList()
-          .cast<SubTask>(),
+      subTasks,
       data['projectId'],
     );
   }
@@ -58,7 +60,7 @@ class Task {
       "description": description,
       "schedule": schedule.millisecondsSinceEpoch,
       "completed": completed,
-      "subTasks": subTasks.map((e) => e.toDocumentData()).toList(),
+      "subTasks": subTasks.map((k, v) => MapEntry(k, v.toDocumentData())),
       "projectId": projectId
     };
   }

@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:karya/data/models/task.dart';
 import 'package:karya/data/services/Tasks.dart';
-import 'package:karya/views/task_details_view.dart';
+import 'package:karya/views/task_item_view.dart';
 
 class TaskListView extends StatefulWidget {
-  final List<Task> items;
+  final DateTime startDate;
+  final DateTime endDate;
   final void Function() refreshData;
 
-  const TaskListView({super.key, required this.items, required this.refreshData});
+  const TaskListView({
+    super.key,
+    required this.refreshData,
+    required this.startDate,
+    required this.endDate,
+  });
 
   @override
   State<TaskListView> createState() => _TaskListViewState();
@@ -16,35 +22,20 @@ class TaskListView extends StatefulWidget {
 class _TaskListViewState extends State<TaskListView> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: widget.items.length,
-      itemBuilder: (context, index) {
-        final item = widget.items[index];
+    return FutureBuilder<List<Task>>(
+      future: TaskService.getAllByDateRange(widget.startDate, widget.endDate),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Column(
+            children:
+                snapshot.data!.map((item) => TaskItemView(itemId: item.id)).toList(),
+          );
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
 
-        return ListTile(
-          trailing: item.subTasks.isEmpty
-              ? Checkbox(
-                  onChanged: (bool? value) async {
-                    item.completed = !item.completed;
-                    await TaskService.upsert(item);
-                    setState(() {});
-                  },
-                  value: item.completed)
-              : const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.chevron_right, size: 32,),
-                ),
-          title: Text(item.name),
-          subtitle: Text(item.description),
-          onTap: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => TaskDetailsView(taskId: item.id)),
-            );
-
-            widget.refreshData();
-          },
-        );
+        // By default, show a loading spinner.
+        return const CircularProgressIndicator();
       },
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:karya/pages/settings.dart';
 import 'package:karya/pages/today.dart';
 
 class HomePage extends StatefulWidget {
@@ -56,11 +57,7 @@ class _HomePageState extends State<HomePage> {
           alignment: Alignment.center,
           child: const Text('Page 3'),
         ),
-        Container(
-          color: Colors.red,
-          alignment: Alignment.center,
-          child: const Text('Page 4'),
-        ),
+        const SettingsPage(),
       ][currentPageIndex],
     );
   }

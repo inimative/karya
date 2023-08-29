@@ -18,6 +18,8 @@ Future<void> main() async {
     try {
       FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8099);
       await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+      FirebaseFirestore.instance.settings =
+          const Settings(persistenceEnabled: false);
     } catch (e) {
       // ignore: avoid_print
       print(e);

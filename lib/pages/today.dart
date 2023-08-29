@@ -3,8 +3,6 @@ import 'package:karya/data/models/task.dart';
 import 'package:karya/views/task_form_view.dart';
 import 'package:karya/views/task_list_view.dart';
 
-import '../data/services/Tasks.dart';
-
 class TodayPage extends StatefulWidget {
   const TodayPage({super.key});
 
@@ -22,23 +20,31 @@ class _TodayPageState extends State<TodayPage> {
     setState(() {});
   }
 
-  Widget getBody() {
-    return FutureBuilder<List<Task>>(
-      future: TaskService.load(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return TaskListView(
-              items: snapshot.data ?? [],
-              refreshData: () {
-                setState(() {});
-              });
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
-
-        // By default, show a loading spinner.
-        return const CircularProgressIndicator();
-      },
+  Widget getBody(BuildContext context) {
+    return ListView(
+      children: [
+        Container(
+          margin: const EdgeInsets.all(20),
+          child: Text("Today", style: Theme.of(context).textTheme.titleLarge),
+        ),
+        TaskListView(
+            refreshData: () {
+              setState(() {});
+            },
+            startDate: DateTime.now(),
+            endDate: DateTime.now()),
+        Container(
+          margin: const EdgeInsets.all(20),
+          child:
+              Text("Tomorrow", style: Theme.of(context).textTheme.titleLarge),
+        ),
+        TaskListView(
+            refreshData: () {
+              setState(() {});
+            },
+            startDate: DateTime.now().add(const Duration(days: 1)),
+            endDate: DateTime.now().add(const Duration(days: 1))),
+      ],
     );
   }
 
@@ -48,9 +54,7 @@ class _TodayPageState extends State<TodayPage> {
       appBar: AppBar(
         title: const Text("Today"),
       ),
-      body: Center(
-        child: getBody(),
-      ),
+      body: getBody(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _navigateToNewTaskScreen(context);
@@ -60,3 +64,4 @@ class _TodayPageState extends State<TodayPage> {
     );
   }
 }
+

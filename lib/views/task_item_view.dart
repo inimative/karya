@@ -3,54 +3,38 @@ import 'package:karya/data/models/task.dart';
 import 'package:karya/data/services/Tasks.dart';
 import 'package:karya/views/task_details_view.dart';
 
-class TaskItemView extends StatefulWidget {
-  final String itemId;
+class TaskItemView extends StatelessWidget {
+  final Task item;
+  final void Function() refreshData;
 
-  const TaskItemView({super.key, required this.itemId});
+  const TaskItemView(
+      {super.key, required this.item, required this.refreshData});
 
-  @override
-  State<TaskItemView> createState() => _TaskItemViewState();
-}
-
-class _TaskItemViewState extends State<TaskItemView> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: TaskService.findById(widget.itemId),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListTile(
-              trailing: getTrailingWidget(snapshot),
-              title: Text(snapshot.data!.name),
-              subtitle: Text(snapshot.data!.description),
-              onTap: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          TaskDetailsView(taskId: snapshot.data!.id)),
-                );
+    return ListTile(
+      trailing: getTrailingWidget(),
+      title: Text(item.name),
+      subtitle: Text(item.description),
+      onTap: () async {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => TaskDetailsView(taskId: item.id)),
+        );
 
-                setState(() {});
-              },
-            );
-          } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
-          }
-
-          // By default, show a loading spinner.
-          return const CircularProgressIndicator();
-        });
+        refreshData();
+      },
+    );
   }
 
-  Widget getTrailingWidget(AsyncSnapshot<Task> snapshot) {
-    if (snapshot.data!.subTasks.isEmpty) {
+  Widget getTrailingWidget() {
+    if (item.subTasks.isEmpty) {
       return Checkbox(
-          value: snapshot.data!.completed,
+          value: item.completed,
           onChanged: (bool? value) async {
-            snapshot.data!.completed = !snapshot.data!.completed;
-            await TaskService.upsert(snapshot.data!);
-            setState(() {});
+            item.completed = !item.completed;
+            await TaskService.upsert(item);
           });
     }
     return const Padding(

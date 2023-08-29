@@ -27,8 +27,12 @@ class _TaskListViewState extends State<TaskListView> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Column(
-            children:
-                snapshot.data!.map((item) => TaskItemView(itemId: item.id)).toList(),
+            children: snapshot.data!
+                .map((item) => TaskItemView(
+                      item: item,
+                      refreshData: widget.refreshData,
+                    ))
+                .toList(),
           );
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');

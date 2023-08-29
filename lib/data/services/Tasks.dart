@@ -3,14 +3,6 @@ import 'package:dart_date/dart_date.dart';
 import 'package:karya/data/models/task.dart';
 
 class TaskService {
-  static Future<List<Task>> load() async {
-    var tasks = (await FirebaseFirestore.instance.collection("tasks").get())
-        .docs
-        .map((e) => Task.fromDocumentData(e.data()))
-        .toList();
-    return Future.value(tasks);
-  }
-
   static Future<List<Task>> getAllByDateRange(
       DateTime start, DateTime end) async {
     var tasks = (await FirebaseFirestore.instance
@@ -19,6 +11,23 @@ class TaskService {
                 isGreaterThanOrEqualTo: start.startOfDay.millisecondsSinceEpoch)
             .where("schedule",
                 isLessThanOrEqualTo: end.endOfDay.millisecondsSinceEpoch)
+            .get())
+        .docs
+        .map((e) => Task.fromDocumentData(e.data()))
+        .toList();
+    return Future.value(tasks);
+  }
+
+  static Future<List<Task>> getOverdue() async {
+    var tasks = (await FirebaseFirestore.instance
+            .collection("tasks")
+            .where("schedule",
+                isGreaterThanOrEqualTo:
+                    DateTime.now().subYears(100).millisecondsSinceEpoch)
+            .where("schedule",
+                isLessThanOrEqualTo:
+                    DateTime.now().startOfDay.millisecondsSinceEpoch)
+            .where("completed", isEqualTo: false)
             .get())
         .docs
         .map((e) => Task.fromDocumentData(e.data()))

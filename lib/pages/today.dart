@@ -1,6 +1,7 @@
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
 import 'package:karya/data/models/task.dart';
+import 'package:karya/views/overdue_list_view.dart';
 import 'package:karya/views/task_form_view.dart';
 import 'package:karya/views/task_list_view.dart';
 
@@ -24,6 +25,16 @@ class _TodayPageState extends State<TodayPage> {
   Widget getBody(BuildContext context) {
     return ListView(
       children: [
+        Container(
+          color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+          child: Text("Overdue", style: Theme.of(context).textTheme.titleLarge),
+        ),
+        OverdueTaskListView(
+          refreshData: () {
+            setState(() {});
+          },
+        ),
         Container(
           color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
           padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),

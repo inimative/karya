@@ -37,7 +37,7 @@ class _OverdueTaskListViewState extends State<OverdueTaskListView> {
               child: Text(
                 "You are all caught up!",
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             );
           } else if (snapshot.hasError) {

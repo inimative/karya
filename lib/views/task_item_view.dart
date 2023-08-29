@@ -35,6 +35,7 @@ class TaskItemView extends StatelessWidget {
           onChanged: (bool? value) async {
             item.completed = !item.completed;
             await TaskService.upsert(item);
+            refreshData();
           });
     }
     return const Padding(

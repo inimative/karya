@@ -13,7 +13,7 @@ class TaskItemView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      trailing: getTrailingWidget(),
+      leading: getTrailingWidget(),
       title: Text(item.name),
       subtitle: Text(item.description),
       onTap: () async {

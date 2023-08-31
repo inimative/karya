@@ -25,48 +25,29 @@ class _TodayPageState extends State<TodayPage> {
   Widget getBody(BuildContext context) {
     return ListView(
       children: [
-        Container(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
-          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-          child: Text("Overdue", style: Theme.of(context).textTheme.titleLarge),
-        ),
         OverdueTaskListView(
           refreshData: () {
             setState(() {});
           },
         ),
-        Container(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
-          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-          child: Text("Today", style: Theme.of(context).textTheme.titleLarge),
-        ),
         TaskListView(
+          header: "Today",
           refreshData: () {
             setState(() {});
           },
           startDate: DateTime.now(),
           endDate: DateTime.now(),
         ),
-        Container(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
-          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-          child:
-              Text("Tomorrow", style: Theme.of(context).textTheme.titleLarge),
-        ),
         TaskListView(
+          header: "Tomorrow",
           refreshData: () {
             setState(() {});
           },
           startDate: DateTime.now().add(const Duration(days: 1)),
           endDate: DateTime.now().add(const Duration(days: 1)),
         ),
-        Container(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
-          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-          child:
-              Text("Upcoming", style: Theme.of(context).textTheme.titleLarge),
-        ),
         TaskListView(
+          header: "Upcoming",
           refreshData: () {
             setState(() {});
           },

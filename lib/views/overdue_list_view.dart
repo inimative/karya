@@ -24,12 +24,24 @@ class _OverdueTaskListViewState extends State<OverdueTaskListView> {
           if (snapshot.hasData) {
             if (snapshot.data!.isNotEmpty) {
               return Column(
-                children: snapshot.data!
-                    .map((item) => TaskItemView(
-                          item: item,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                    child: Text("Overdue",
+                        style: Theme.of(context).textTheme.titleLarge),
+                  ),
+                  const Divider(
+                    thickness: 1,
+                    height: 0,
+                  ),
+                  ...snapshot.data!
+                      .map((item) => TaskItemView(
+                            item: item,
                           refreshData: widget.refreshData,
                         ))
-                    .toList(),
+                      .toList()
+                ],
               );
             }
             return Container(

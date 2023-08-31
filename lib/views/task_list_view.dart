@@ -7,9 +7,11 @@ class TaskListView extends StatefulWidget {
   final DateTime startDate;
   final DateTime endDate;
   final void Function() refreshData;
+  final String header;
 
   const TaskListView({
     super.key,
+    required this.header,
     required this.refreshData,
     required this.startDate,
     required this.endDate,
@@ -27,12 +29,24 @@ class _TaskListViewState extends State<TaskListView> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Column(
-            children: snapshot.data!
-                .map((item) => TaskItemView(
-                      item: item,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                child: Text(widget.header,
+                    style: Theme.of(context).textTheme.titleLarge),
+              ),
+              Divider(
+                thickness: 1,
+                height: 0,
+              ),
+              ...snapshot.data!
+                  .map((item) => TaskItemView(
+                        item: item,
                       refreshData: widget.refreshData,
                     ))
-                .toList(),
+                  .toList()
+            ],
           );
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');

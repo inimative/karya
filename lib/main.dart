@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:karya/notification.dart';
 import 'package:karya/pages/home.dart';
 import 'package:karya/pages/login.dart';
+import 'package:workmanager/workmanager.dart';
 
+import 'data/services/BackgroundService.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -30,6 +32,17 @@ Future<void> main() async {
   }
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  Workmanager().initialize(
+      callbackDispatcher, // The top level function, aka callbackDispatcher
+      isInDebugMode:
+          true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+      );
+  // Workmanager().registerPeriodicTask(
+  //   "scheduleNotificationTask",
+  //   "scheduleNotificationTask",
+  //   frequency: const Duration(seconds: 5),
+  // );
 
   runApp(const MyApp());
 }
